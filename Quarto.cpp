@@ -1,6 +1,6 @@
  //Prof. Marco Antonio, abr/2020, ST765 FT UNICAMP
-// Programa baseado no exercício "Parquinho.c" e "Jato.c"
-// Aplicação de texturas
+// Programa baseado no exercÃ­cio "Parquinho.c" e "Jato.c"
+// AplicaÃ§Ã£o de texturas
 // Clara Anna Miranda - 155041
 // Katherine Rocha - 106768
  
@@ -11,9 +11,12 @@
 #include "image.h"
 
 
-//#define TEXTURA_DO_CHAO "felpudo.rgb"
+#define TEXTURA_DO_POSTER "poster.rgb"
 #define TEXTURA_DO_CHAO "piso.rgb"
 #define TEXTURA_MADEIRA "madeira.rgb"
+#define TEXTURA_DO_MONITOR "logo_ft.rgb"
+#define TEXTURA_UNICAMP "unicamp.rgb"
+
 #define PI 3.1415
 GLfloat tetaxz = 0;
 GLfloat raioxz = 6;
@@ -21,7 +24,15 @@ GLfloat obs[3] = { 0.0,7.0,0.0 };
 GLfloat look[3] = { 0.0,3.0,0.0 };
 
 
+
+//var textura
 GLuint  textura_chao;
+GLuint  textura_poster;
+GLuint  textura_monitor;
+GLuint  textura_unicamp;
+
+
+//var mudanca perspectiva
 static int rodatudo = 0;
 
 GLfloat planotext[4][2]={
@@ -30,6 +41,28 @@ GLfloat planotext[4][2]={
   {+1,+1},
   {-1,+1}
 };
+
+GLfloat postertext[4][2]={
+  {0,0},
+  {+1,0},
+  {+1,+1},
+  {0,+1}
+};
+
+GLfloat monitortext[4][2]={
+  {0,0},
+  {+1,0},
+  {+1,+1},
+  {0,+1}
+};
+
+GLfloat unicamptext[4][2]={
+  {0,0},
+  {+1,0},
+  {+1,+1},
+  {0,+1}
+};
+
 
 GLfloat mesa_difusa[]    = { 1.0, 0.0, 1.0, 1.0 };
 GLfloat mesa_especular[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -57,7 +90,7 @@ GLint gouraud=0;
 void display(void){
   glClear (GL_COLOR_BUFFER_BIT);
   
-	  glEnable(GL_DEPTH_TEST);
+	  /*glEnable(GL_DEPTH_TEST);
 	  glEnable(GL_LIGHTING);
 	
 	  glDepthMask(GL_TRUE);
@@ -69,55 +102,57 @@ void display(void){
 	  }
 	  else{
 	    glShadeModel(GL_FLAT);
-	  }
- 
-
+	  }*/
+	  
   	glPushMatrix();
-	glRotatef ((GLfloat) rodatudo, 0.0, 1.0, 0.0); //Rotate do R
-	
-	
-	/* calcula a posicao do observador */
-	/*obs[0] = raioxz * cos(2 * PI*tetaxz / 360);
-	obs[2] = raioxz * sin(2 * PI*tetaxz / 360);
-	gluLookAt(obs[0], obs[1], obs[2], look[0], look[1], look[2], 0.0, 1.0, 0.0);*/
-  
-    
+	glRotatef ((GLfloat) rodatudo, 0.0, 1.0, 0.0); //Rotate do R 
 
-	//Textura do chao
-	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
-  	glBindTexture(GL_TEXTURE_2D,textura_chao);
-    
-  //chao
-  //versao dois do chao
-  	glEnable(GL_TEXTURE_2D);  //seta textura
-  
-  	//iluminação do chao
+      	//iluminaÃ§Ã£o do chao
+  	/*
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, chao_difusa);
   	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, chao_especular);
   	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, chao_brilho);
+  */
   
-  
-  glBegin(GL_QUADS);
-  	glColor3f(0.5, 0.8, 0.0);
-  	glTexCoord2fv(planotext[0]); glVertex3f(-20,0.5,20);
-  	glTexCoord2fv(planotext[1]); glVertex3f(20,0.5,20);
-  	glTexCoord2fv(planotext[2]); glVertex3f(20,0.5,-20);
-  	glTexCoord2fv(planotext[3]); glVertex3f(-20,0.5,-20);
-  glEnd();
-  
+	//Textura do chao
+	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
+  	glBindTexture(GL_TEXTURE_2D,textura_chao);
+  	glEnable(GL_TEXTURE_2D);  //seta textura
+	  glBegin(GL_QUADS);
+	  	glColor3f(0.5, 0.8, 0.0);
+	  	glTexCoord2fv(planotext[0]); glVertex3f(-20,0.5,20);
+	  	glTexCoord2fv(planotext[1]); glVertex3f(20,0.5,20);
+	  	glTexCoord2fv(planotext[2]); glVertex3f(20,0.5,-20);
+	  	glTexCoord2fv(planotext[3]); glVertex3f(-20,0.5,-20);
+	  glEnd();
   glDisable(GL_TEXTURE_2D); //encerra textura
   
-  /*
-  //chao cubico sem textura
-  	glBegin(GL_QUADS);
-  	glColor3f(0.5, 0.8, 0.0);
-	glVertex3f(-15,1.5,15);
-   	glVertex3f(15,1.5,15);
-  	glVertex3f(15,1.5,-15);
-  	glVertex3f(-15,1.5,-15);
-  	glEnd();
- */
+
   
+  		//moldura poster
+  		glColor3f(0.5, 0.5, 0.8);
+		glPushMatrix();
+			glTranslatef(13.5,15, -20);
+			glScalef(15,12, 0.5);
+			glutSolidCube(1.0);
+		glPopMatrix();
+  
+  //textura do poster 
+  	glEnable(GL_TEXTURE_2D);  //seta textura
+	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
+  	glBindTexture(GL_TEXTURE_2D,textura_poster);
+  //parede modelo 1 poster YoI
+	    glBegin(GL_QUADS);
+	    	glColor3f(0.5, 0.0, 0.0);
+	  		glTexCoord2fv(postertext[0]);  glVertex3f(7.5,10,-20);
+	  		glTexCoord2fv(postertext[1]);  glVertex3f(20,10,-20);
+	 	 	glTexCoord2fv(postertext[2]);  glVertex3f(20,20,-20);
+	 	 	glTexCoord2fv(postertext[3]);  glVertex3f(7.5,20,-20);
+		glEnd();
+  	glDisable(GL_TEXTURE_2D); //encerra textura
+
+  	
+  	
 	 //cadeira
 	glColor3f(0.5, 0.0, 0.0);
 	glPushMatrix();
@@ -216,6 +251,7 @@ void display(void){
 	glPopMatrix();
 	
 	//computador
+	//base
 	glColor3f(0.0, 0.0, 0.0);
 	glPushMatrix();
 	glTranslatef(6.0, 7.0, -5.0);
@@ -223,22 +259,56 @@ void display(void){
 	glutSolidCube(1.0);
 	glPopMatrix();
 	
+	
+	//monitor
 	glColor3f(0.0, 0.0, 0.0);
 	glPushMatrix();
 	glTranslatef(6.0, 9.0, -7.5);
 	glScalef(6.0, 4.0, 0.5);
 	glutSolidCube(1.0);
 	glPopMatrix();
+  
+    //textura da tela 
+  	glEnable(GL_TEXTURE_2D);  //seta textura
+	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
+  	glBindTexture(GL_TEXTURE_2D,textura_monitor);
+  	
+  	glBegin(GL_QUADS);
+  		glColor3f(1.0, 1.0, 1.0);  		
+  		glTexCoord2fv(monitortext[0]); glVertex3f(3.5,7.5,-7.0);
+  		glTexCoord2fv(monitortext[1]); glVertex3f(8.5,7.5,-7.0);
+ 		glTexCoord2fv(monitortext[2]); glVertex3f(8.5,10.5,-7.0);
+ 		glTexCoord2fv(monitortext[3]); glVertex3f(3.5,10.5,-7.0);	
+  	glEnd();
+  	
+  	glDisable(GL_TEXTURE_2D); //encerra textura
+  	
+  	
+  	//costas do monitor
+  	//textura do logo
+  	glEnable(GL_TEXTURE_2D);  //seta textura
+	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
+  	glBindTexture(GL_TEXTURE_2D,textura_unicamp);
+  	
+  	glBegin(GL_QUADS);
+  		glColor3f(0.0, 0.0, 0.0);  		
+  		glTexCoord2fv(unicamptext[0]); glVertex3f(3,7.5,-7.8);
+  		glTexCoord2fv(unicamptext[1]); glVertex3f(9,7.5,-7.8);
+ 		glTexCoord2fv(unicamptext[2]); glVertex3f(9,10.5,-7.8);
+ 		glTexCoord2fv(unicamptext[3]); glVertex3f(3,10.5,-7.8);	
+  	glEnd();
+  	
+  	glDisable(GL_TEXTURE_2D); //encerra textura
 	
 
-	//maça
+	//maÃ§a
 	glColor3f(6,0.0,0);
 	glPushMatrix();
 	glTranslatef(1.0, 7.3, -3.0);
 	glutSolidSphere(0.5, 10, 8);
 	glPopMatrix();
 
-	//cabo Maça
+	//cabo MaÃ§a
 	glColor3f(0.0, 0.5, 0.0);
 	glPushMatrix();
 	glTranslatef(1.0, 7.8, -3.0);
@@ -251,7 +321,6 @@ void display(void){
 	glColor3f(0.6, 0.6, 0.6);
 	glPushMatrix();
 	glTranslatef(12.5, 7.5, -6.0);
-	//glScalef(0.5, 0.8, 0.5);
 	glutSolidTeapot(1.0);
 	glPopMatrix();
 	
@@ -276,7 +345,7 @@ void display(void){
 	glutSolidCube(1.0);
 	glPopMatrix();
 	
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, livro_difusa);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, livro_difusa);
   	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, livro_especular);
   	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, livro_brilho);
 	
@@ -289,7 +358,7 @@ void display(void){
 	glPopMatrix();
 	
 	
-			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, livro_difusa);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, livro_difusa);
   	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, livro_especular);
   	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, livro_brilho);
 	//livro 2
@@ -301,10 +370,11 @@ void display(void){
 	glPopMatrix();
 	
 
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, livro_difusa);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, livro_difusa);
   	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, livro_especular);
   	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, livro_brilho);
-		//livro 2
+	
+	//livro 2
 	glColor3f(0.0, 0.5, 1);
 	glPushMatrix();
 	glTranslatef(-6, 17, -18);
@@ -320,7 +390,7 @@ void display(void){
 	glutSolidCube(1.0);
 	glPopMatrix();
 	
-		//livros deitados
+	//livros deitados
 	glColor3f(1.0, 0.2, 0.2);
 	glPushMatrix();
 	glTranslatef(-11.5, 16, -18);
@@ -328,7 +398,7 @@ void display(void){
 	glutSolidCube(1.0);
 	glPopMatrix();
 	
-			//livros deitados
+	//livros deitados
 	glColor3f(0.5, 1.0, 0.2);
 	glPushMatrix();
 	glTranslatef(-11.5, 17, -18);
@@ -370,6 +440,89 @@ void carregar_texturas(void){
   	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
  	 glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
  	 glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);*/
+ 	 
+ 	 
+ 	   /* textura do poster */
+  
+    glGenTextures(1, &textura_poster);
+  	glBindTexture(GL_TEXTURE_2D, textura_poster);
+  
+  	if(!(img=ImageLoad(TEXTURA_DO_POSTER))) {
+    	fprintf(stderr,"Error reading a texture.\n");
+    	exit(-1);
+  	}
+
+  	gluerr=gluBuild2DMipmaps(GL_TEXTURE_2D, 3, 
+			   img->sizeX, img->sizeY, 
+			   GL_RGB, GL_UNSIGNED_BYTE, 
+			   (GLvoid *)(img->data));
+  	if(gluerr){
+ 	   fprintf(stderr,"GLULib%s\n",gluErrorString(gluerr));
+ 	   exit(-1);
+ 	}
+ 	
+ 	  	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+ 	 glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+  	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+ 	 glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+ 	 glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
+ 	 
+ 	 
+ 	 
+ 	 
+ 	 
+ 	  	   /* textura do monitor */
+  
+    glGenTextures(1, &textura_monitor);
+  	glBindTexture(GL_TEXTURE_2D, textura_monitor);
+  
+  	if(!(img=ImageLoad(TEXTURA_DO_MONITOR))) {
+    	fprintf(stderr,"Error reading a texture.\n");
+    	exit(-1);
+  	}
+
+  	gluerr=gluBuild2DMipmaps(GL_TEXTURE_2D, 3, 
+			   img->sizeX, img->sizeY, 
+			   GL_RGB, GL_UNSIGNED_BYTE, 
+			   (GLvoid *)(img->data));
+  	if(gluerr){
+ 	   fprintf(stderr,"GLULib%s\n",gluErrorString(gluerr));
+ 	   exit(-1);
+ 	}
+ 	
+ 	  	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+ 	 glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+  	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+ 	 glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+ 	 glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
+ 	 
+ 	 
+ 	 
+ 	  	 
+ 	  	   /* textura do monitor unicamp*/
+  
+    glGenTextures(1, &textura_unicamp);
+  	glBindTexture(GL_TEXTURE_2D, textura_unicamp);
+  
+  	if(!(img=ImageLoad(TEXTURA_UNICAMP))) {
+    	fprintf(stderr,"Error reading a texture.\n");
+    	exit(-1);
+  	}
+
+  	gluerr=gluBuild2DMipmaps(GL_TEXTURE_2D, 3, 
+			   img->sizeX, img->sizeY, 
+			   GL_RGB, GL_UNSIGNED_BYTE, 
+			   (GLvoid *)(img->data));
+  	if(gluerr){
+ 	   fprintf(stderr,"GLULib%s\n",gluErrorString(gluerr));
+ 	   exit(-1);
+ 	}
+ 	
+ 	  	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+ 	 glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+  	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+ 	 glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+ 	 glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
   
 }
 
@@ -411,7 +564,7 @@ case 'T':
 void init(void){
   glClearColor (1.0f, 0.5f, 1.0f, 1.0f);
   carregar_texturas();
- 
+ /*
  gouraud=1;
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
@@ -429,7 +582,7 @@ void init(void){
 
   glEnable(GL_AUTO_NORMAL);
   glEnable(GL_NORMALIZE);
-
+*/
   
 }
 
@@ -447,5 +600,4 @@ int main(int argc, char** argv){
   glutMainLoop();
   return 0;
 }
-
 
